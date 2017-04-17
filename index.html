@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+
+$(document).ready(function(){
+    $("#key_button").click(function(){
+      $.get('http://localhost:8000/createKey').then(function(d) {
+					//console.log(d);
+          $("#key_text").val(d.xpub);
+				});
+    });
+    $("#asset_create_button").click(function(){
+      var assetName = $('#asset_create_text').val();
+      $.post("http://localhost:8000/createAsset",{assetName: assetName}, function(data){
+    			// catching error case where request times out on the server side
+          //console.log(data);
+
+			});
+    });
+    $("#account_create_button1").click(function(){
+      var accountName = $('#account_create_text1').val();
+      $.post("http://localhost:8000/createAccount1",{accountName: accountName}, function(data){
+    			// catching error case where request times out on the server side
+          //console.log(data);
+
+			});
+    });
+
+    $("#account_create_button2").click(function(){
+      var accountName = $('#account_create_text2').val();
+      $.post("http://localhost:8000/createAccount2",{accountName: accountName}, function(data){
+    			// catching error case where request times out on the server side
+          //alert(data);
+
+			});
+    });
+
+	 $("#issue").click(function(){
+     var assetName = $("#issuing_asset").val();
+     var accountName = $("#issuing_account").val();
+     var qty = $("#issuing_qty").val();
+     $.post("http://localhost:8000/issueAssetToAccount",{assetName:assetName,accountName:accountName,qty:qty}, function(data){
+         // catching error case where request times out on the server side
+        // alert(data);
+     });
+
+    });
+
+    $("#get-issue-transactions-button").click(function(){
+      var assetName = $("#listing_asset").val();
+      $.post("http://localhost:8000/getIssueTransactions",{assetName: assetName}, function(data){
+    			// catching error case where request times out on the server side
+          //console.log(data);
+          $('#issueList').html(data);
+			});
+    });
+
+    $("#get-transfer-transactions-button").click(function(){
+      var assetName = $("#listing_asset").val();
+      $.post("http://localhost:8000/getTransferTransactions",{assetName: assetName}, function(data){
+          // catching error case where request times out on the server side
+          //console.log(data);
+          $('#issueList').html(data);
+      });
+    });
+
+    $("#get-asset-circulation").click(function(){
+      var assetName = $("#listing_asset").val();
+      $.post("http://localhost:8000/getAssetCirculation",{assetName: assetName}, function(data){
+    			// catching error case where request times out on the server side
+          //console.log(data);
+          $('#issueList').html(data);
+			});
+    });
+
+    $("#get-unspent-outputs").click(function(){
+      var assetName = $("#listing_asset").val();
+      $.post("http://localhost:8000/getUnspentOutputs",{assetName: assetName}, function(data){
+    			// catching error case where request times out on the server side
+          //console.log(data);
+          $('#issueList').html(data);
+			});
+    });
+
+    $("#account_list_balance-button").click(function(){
+      var accountName = $("#account_list_balance_text").val();
+      $.post("http://localhost:8000/getAccountBalances",{accountName: accountName}, function(data){
+    			// catching error case where request times out on the server side
+          //console.log(data);
+          $('#issueList').html(data);
+			});
+    });
+
+    $("#account_list_transactions-button").click(function(){
+      var accountName = $("#account_list_balance_text").val();
+      $.post("http://localhost:8000/getAccountTransactions",{accountName: accountName}, function(data,err){
+    			// catching error case where request times out on the server side
+          console.log(err);
+          $('#issueList').html(data);
+			});
+    });
+
+    $("#transact").click(function(){
+      var senderAccount = $("#sender_account").val();
+      var recieverAccount = $("#reciever_account").val();
+      var transferQty = $("#transfer_qty").val();
+      var transferAsset = $("#transfer_asset").val();
+      $.post("http://localhost:8000/transact",{senderAccount:senderAccount,recieverAccount:recieverAccount,transferQty:transferQty,transferAsset:transferAsset}, function(data){
+    			// catching error case where request times out on the server side
+          //console.log(data);
+          $('#issueList').html(data);
+			});
+    });
+});
+</script>
+</head>
+<body>
+	<center><h2>Chain.com Test</h2><h4>Adil Haris</h4><br>
+
+
+<input type="text" id="key_text" placeholder="Generated Key">
+<button id="key_button">Generate Key</button>
+<br><br>
+
+
+<input type="text" id="asset_create_text" placeholder="Asset Name">
+<button id="asset_create_button">Create Asset</button>
+<br><br>
+
+
+<input type="text" id="account_create_text1" placeholder="Account Name 1">
+<button id="account_create_button1">Create Account</button>
+<input type="text" id="account_create_text2" placeholder="Account Name 2">
+<button id="account_create_button2">Create Account</button>
+<br><br>
+
+<input type="text" id="account_list_balance_text" placeholder="Account Name">
+<button id="account_list_balance-button">Get Balances</button>
+<button id="account_list_transactions-button">Get Transactions</button>
+<br><br>
+
+<input type="text" id="issuing_asset" placeholder="Issue Asset Name">
+<input type="text" id="issuing_account" placeholder="Issue Account Name">
+<input type="text" id="issuing_qty" placeholder="Quantity Issued">
+<button id="issue">Issue</button>
+<br><br>
+
+
+<input type="text" id="sender_account" placeholder="Sender Account">
+<input type="text" id="reciever_account" placeholder="Reciever Account">
+<input type="text" id="transfer_qty" placeholder="Quantity">
+<input type="text" id="transfer_asset" placeholder="Transfer Asset Name">
+<button id="transact">Transact</button>
+<br><br>
+
+
+<input type="text" id="listing_asset" placeholder="Issued Asset Name"><br><br>
+<button id="get-issue-transactions-button">Fetch Issue Transactions</button>
+<button id="get-transfer-transactions-button">Fetch Transfer Transactions</button>
+<button id="get-asset-circulation">Get Asset Circulation</button>
+<button id="get-unspent-outputs">Get Unspend Outputs</button>
+<div id='issueList'></div><br>
+<br><br>
+
+
+</center>
+</body>
+</html>
